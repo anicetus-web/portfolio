@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Neon Banking — Премиальный цифровой банк будущего</title>
+<meta name="description" content="Neon Banking — премиальный цифровой банк будущего. Кредитование, выпуск стеклянных карт, карьера. Жидкий металл, финансовые потоки, интерфейс завтрашнего дня." />
+<meta name="theme-color" content="#050507" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ RESET / BASE ============ */
+*{ box-sizing:border-box; margin:0; padding:0 }
+html{ font-size:16px; -webkit-font-smoothing:antialiased; scroll-behavior:auto }
+body{
+  background:#050507; color:#e8eaf0;
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+a{ color:inherit; text-decoration:none }
+button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer }
+ul{ list-style:none }
+img{ display:block }
+input,textarea,select{ font:inherit }
+.mono{ font-family:'JetBrains Mono',ui-monospace,monospace }
+.sr-only{ position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0 }
+:focus-visible{ outline:2px solid #00e5d4; outline-offset:3px }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition-duration:.01ms !important } }
+
+/* ============ ADAPTIVE REM GRID ============ */
+@media (max-width:1920px){ html{ font-size:0.833333vw } }
+@media (max-width:1440px){ html{ font-size:1.111111vw } }
+@media (max-width:1024px){ html{ font-size:1.5625vw } }
+@media (max-width:640px){  html{ font-size:4.166667vw } }
+
+/* ============ TOKENS ============ */
+:root{
+  --void:#050507;
+  --panel:#0b0c10;
+  --panel-2:#101218;
+  --line:#1c1f27;
+  --line-bright:#2a2e3a;
+  --ink:#e8eaf0;
+  --muted:#8a91a0;
+  --subtle:#5b6273;
+  --chrome-hi:#d6dae2;
+  --chrome-mid:#9aa0ac;
+  --chrome-lo:#4a4f5c;
+  --neon:#00e5d4;
+  --neon-dim:#0a8f86;
+  --violet:#7b5cff;
+  --violet-dim:#4733a8;
+  --amber:#ffb547;
+  --radius-card:1.5rem;
+  --radius-sm:1rem;
+  --radius-ctrl:0.75rem;
+  --shell:84rem;
+  --hud:'JetBrains Mono',ui-monospace,monospace;
+}
+
+/* ============ SHELL / UTIL ============ */
+.shell{ max-width:var(--shell); margin-inline:auto; padding-inline:1.5rem }
+@media (min-width:640px){ .shell{ padding-inline:2.5rem } }
+@media (min-width:1024px){ .shell{ padding-inline:3rem } }
+
+/* HUD eyebrow */
+.eyebrow{
+  display:inline-flex; align-items:center; gap:.625rem;
+  font-family:var(--hud); font-size:.72rem; font-weight:500;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--neon);
+}
+.eyebrow::before{
+  content:''; width:1.4rem; height:1px;
+  background:linear-gradient(90deg,transparent,var(--neon));
+}
+.eyebrow.plain::before{ display:none }
+.eyebrow .idx{ color:var(--subtle) }
+
+/* section frame */
+.section{ position:relative; background:var(--void) }
+.frame-corner{ position:absolute; width:.9rem; height:.9rem; border:1px solid var(--line-bright); pointer-events:none; opacity:.6 }
+.frame-corner.tl{ left:.6rem; top:.6rem; border-right:0; border-bottom:0 }
+.frame-corner.tr{ right:.6rem; top:.6rem; border-left:0; border-bottom:0 }
+.frame-corner.bl{ left:.6rem; bottom:.6rem; border-right:0; border-top:0 }
+.frame-corner.br{ right:.6rem; bottom:.6rem; border-left:0; border-top:0 }
+
+/* hairline grid bg */
+.gridlines{
+  position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:4rem 4rem;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 80%);
+}
+
+/* reveal base */
+.reveal{ opacity:0; transform:translateY(1.5rem); transition:opacity .9s cubic-bezier(.215,.61,.355,1),transform .9s cubic-bezier(.215,.61,.355,1) }
+.reveal.in{ opacity:1; transform:none }
+.line-clip{ overflow:hidden; display:block }
+.line-clip>span{ display:block; transform:translateY(110%); opacity:0; transition:transform .9s cubic-bezier(.215,.61,.355,1),opacity .9s cubic-bezier(.215,.61,.355,1) }
+.line-clip.in>span{ transform:none; opacity:1 }
+.word{ display:inline-block; transform:translateY(1.5rem); opacity:0; transition:transform .7s cubic-bezier(.165,.84,.44,1),opacity .7s cubic-bezier(.165,.84,.44,1) }
+.word.in{ transform:none; opacity:1 }
+
+/* ============ BUTTONS ============ */
+.btn{ display:inline-flex; align-items:center; gap:.7rem; font-weight:500; font-size:.9rem; border-radius:9999px; position:relative; transition:transform .35s cubic-bezier(.2,.8,.2,1) }
+.btn:hover{ transform:translateY(-2px) }
+.btn .lbl{ white-space:nowrap }
+.btn-arrow{ padding:.4rem .4rem .4rem 1.6rem }
+.btn-plain{ padding:.95rem 1.9rem }
+.btn .badge{ width:2.4rem; height:2.4rem; display:grid; place-items:center; border-radius:9999px; font-size:1rem; flex:none; transition:transform .35s cubic-bezier(.2,.8,.2,1) }
+.btn:hover .badge svg{ transform:translate(2px,-2px) }
+.btn .badge svg{ transition:transform .35s cubic-bezier(.2,.8,.2,1) }
+
+.btn-neon{ background:linear-gradient(135deg,#00e5d4,#0bbfb0); color:#04201d; box-shadow:0 0 0 1px rgba(0,229,212,.4),0 8px 30px -8px rgba(0,229,212,.5) }
+.btn-neon .badge{ background:#04201d; color:#00e5d4 }
+.btn-glass{ background:rgba(255,255,255,.04); color:var(--ink); border:1px solid var(--line-bright); backdrop-filter:blur(8px) }
+.btn-glass .badge{ background:var(--ink); color:var(--void) }
+.btn-light{ background:var(--ink); color:var(--void) }
+.btn-light .badge{ background:var(--void); color:var(--neon) }
+.btn-ghost{ background:transparent; color:var(--ink); border:1px solid var(--line-bright) }
+.btn-ghost:hover{ border-color:var(--neon); color:var(--neon) }
+
+/* chrome metal text */
+.chrome-text{
+  background:linear-gradient(180deg,#ffffff 0%,#e6eaf2 16%,#bcc2cf 40%,#7e8492 50%,#aeb4c1 58%,#eef1f6 78%,#a7adba 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 14px rgba(0,229,212,.10)) drop-shadow(0 1px 0 rgba(255,255,255,.16));
+}
+
+/* tag chips */
+.chip{ display:inline-flex; align-items:center; gap:.4rem; border:1px solid var(--line-bright); color:var(--muted); border-radius:9999px; padding:.4rem .85rem; font-family:var(--hud); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase }
+.chip.neon{ border-color:rgba(0,229,212,.4); color:var(--neon) }
+
+/* divider value */
+.kpi-num{ font-family:var(--hud); font-weight:600; letter-spacing:-.02em; line-height:1 }
+</style>
+<style>
+/* ============ PAGE LOADER ============ */
+#loader{
+  position:fixed; inset:0; z-index:200; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:2.4rem;
+  background:radial-gradient(ellipse 70% 60% at 50% 45%,#0d0f15 0%,#050507 70%);
+  border-radius:0 0 var(--radius-card) var(--radius-card);
+  transition:transform .7s cubic-bezier(.22,1,.36,1);
+  will-change:transform;
+}
+#loader .ldr-center{ display:flex; flex-direction:column; align-items:center; gap:1.1rem; text-align:center; transition:opacity .6s ease,transform .6s ease }
+#loader .ldr-brand{ display:flex; align-items:center; gap:.7rem; font-size:1.7rem; font-weight:600; letter-spacing:-.01em }
+#loader .ldr-brand svg{ color:var(--neon); filter:drop-shadow(0 0 14px rgba(0,229,212,.6)) }
+#loader .ldr-tag{ max-width:26ch; font-family:var(--hud); font-size:.74rem; letter-spacing:.06em; color:var(--subtle) }
+#loader .ldr-bar{ width:min(24rem,74vw); display:flex; flex-direction:column; gap:.7rem }
+#loader .track{ height:2px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden }
+#loader .fill{ height:100%; width:0%; background:linear-gradient(90deg,#0a8f86,#00e5d4); box-shadow:0 0 12px rgba(0,229,212,.7); transition:width .1s linear }
+#loader .ldr-row{ display:flex; justify-content:space-between; font-family:var(--hud); font-size:.7rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--subtle) }
+#loader .ldr-count{ color:var(--neon) }
+
+/* ============ HEADER ============ */
+#hdr{ position:absolute; inset-inline:0; top:0; z-index:90; opacity:0; transform:translateY(-14px); transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1) }
+#hdr.in{ opacity:1; transform:none }
+#hdr .bar{ display:flex; align-items:center; justify-content:space-between; gap:1.5rem; padding-block:1.4rem }
+.brand-btn{ display:flex; align-items:center; gap:.6rem; font-size:1.15rem; font-weight:600; letter-spacing:-.01em }
+.brand-btn svg{ color:var(--neon); transition:transform .35s cubic-bezier(.2,.8,.2,1); filter:drop-shadow(0 0 8px rgba(0,229,212,.5)) }
+.brand-btn:hover svg{ transform:rotate(90deg) scale(1.08) }
+.nav-main{ display:none }
+@media (min-width:1024px){ .nav-main{ display:flex; gap:2rem; font-size:.85rem; font-weight:500 } }
+.nav-main button{ position:relative; color:var(--muted); transition:color .25s; display:inline-flex; align-items:center; gap:.3rem }
+.nav-main button:hover{ color:var(--ink) }
+.nav-main button .caret{ font-size:.6rem; opacity:.5 }
+.hdr-right{ display:flex; align-items:center; gap:.7rem }
+.clock-chip{ display:none }
+@media (min-width:768px){ .clock-chip{ display:flex; align-items:center; gap:.7rem; border:1px solid var(--line-bright); background:rgba(11,12,16,.5); backdrop-filter:blur(8px); border-radius:var(--radius-ctrl); padding:.5rem .85rem; font-family:var(--hud); font-size:.68rem; color:var(--muted) } }
+.clock-chip .lab{ color:var(--subtle); letter-spacing:.1em; text-transform:uppercase }
+.clock-chip .t{ min-width:4.2rem; color:var(--neon); font-weight:500 }
+.clock-chip .dot{ color:var(--line-bright) }
+.menu-btn{ border:1px solid var(--line-bright); background:rgba(11,12,16,.5); backdrop-filter:blur(8px); border-radius:var(--radius-ctrl); transition:border-color .25s,background .25s }
+.menu-btn:hover{ border-color:var(--neon); background:rgba(0,229,212,.06) }
+.menu-btn .inner{ display:flex; align-items:center; gap:.5rem; padding:.55rem 1rem; font-family:var(--hud); font-size:.68rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase; transition:transform .3s }
+.menu-btn:hover .inner{ transform:scale(1.04) }
+@media (max-width:639px){ .menu-btn .inner .lbl{ display:none } }
+
+/* ============ HERO ============ */
+#hero{ position:relative; isolation:isolate; overflow:hidden; min-height:100vh; min-height:100svh; border-radius:0 0 var(--radius-card) var(--radius-card); background:#050507 }
+#chrome-canvas{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none }
+#hero .hero-vignette{ position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(ellipse 90% 80% at 50% 40%,transparent 40%,rgba(5,5,7,.7) 90%),linear-gradient(180deg,rgba(5,5,7,.5),transparent 30%,rgba(5,5,7,.85)) }
+#hero .scanlines{ position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.35; background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0px,rgba(255,255,255,.025) 1px,transparent 1px,transparent 3px) }
+.hero-mark{ position:absolute; inset-inline:0; bottom:5.5rem; z-index:1; text-align:center; pointer-events:none; user-select:none; font-weight:700; line-height:1; font-size:13rem; letter-spacing:-.04em; opacity:0; transform:translateY(20px); transition:opacity 1s cubic-bezier(.22,1,.36,1),transform 1s cubic-bezier(.22,1,.36,1) }
+.hero-mark.in{ opacity:1; transform:none }
+
+.hero-grid{ position:relative; z-index:20; display:flex; flex-direction:column; gap:2.5rem; padding:8rem 1.5rem 5rem }
+@media (min-width:640px){ .hero-grid{ padding-inline:2.5rem } }
+@media (min-width:1024px){ .hero-grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:3rem; align-items:center; min-height:100svh; padding:9rem 3rem 7rem } }
+.hero-left{ display:flex; flex-direction:column; gap:1.8rem }
+@media (min-width:1024px){ .hero-left{ grid-column:span 7 } }
+.hero-right{ display:flex; flex-direction:column; gap:1.5rem; align-items:flex-start }
+@media (min-width:1024px){ .hero-right{ grid-column:span 5; align-items:flex-end } }
+.hero-h1{ max-width:16ch; font-size:2.6rem; font-weight:600; line-height:.98; letter-spacing:-.03em }
+@media (min-width:640px){ .hero-h1{ font-size:3.6rem } }
+@media (min-width:1024px){ .hero-h1{ font-size:4.4rem } }
+.hero-sub{ max-width:42ch; font-size:1rem; color:var(--muted); line-height:1.5 }
+.hero-cta{ display:flex; flex-wrap:wrap; gap:.8rem }
+.hero-meta-row{ display:flex; align-items:center; gap:1.4rem; flex-wrap:wrap; font-family:var(--hud); font-size:.74rem; color:var(--subtle); letter-spacing:.04em }
+.hero-meta-row b{ color:var(--ink); font-weight:600 }
+.hero-meta-row .sep{ width:1px; height:1.1rem; background:var(--line-bright) }
+
+/* ============ GLASS CARD (hero) ============ */
+.gcard-wrap{ width:100%; max-width:23rem; perspective:1200px }
+@media (min-width:1024px){ .gcard-wrap{ width:21rem } }
+.gcard{
+  position:relative; aspect-ratio:1.586/1; border-radius:1.25rem; padding:1.4rem;
+  display:flex; flex-direction:column; justify-content:space-between;
+  background:
+    linear-gradient(135deg,rgba(0,229,212,.14),rgba(123,92,255,.12) 55%,rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 30px 80px -30px rgba(0,229,212,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.4);
+  backdrop-filter:blur(14px);
+  transform-style:preserve-3d; transition:transform .15s ease-out;
+  overflow:hidden;
+}
+.gcard::before{ content:''; position:absolute; inset:0; background:radial-gradient(120% 80% at var(--mx,30%) var(--my,20%),rgba(255,255,255,.28),transparent 45%); pointer-events:none; mix-blend-mode:screen }
+.gcard::after{ content:''; position:absolute; inset:0; background:repeating-linear-gradient(115deg,transparent 0 8px,rgba(255,255,255,.025) 8px 9px); pointer-events:none }
+.gcard .gc-top{ display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:2 }
+.gcard .gc-brand{ display:flex; align-items:center; gap:.45rem; font-weight:600; font-size:.95rem; letter-spacing:-.01em }
+.gcard .gc-brand svg{ color:var(--neon); filter:drop-shadow(0 0 8px rgba(0,229,212,.7)) }
+.gcard .gc-tier{ font-family:var(--hud); font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--neon); border:1px solid rgba(0,229,212,.4); padding:.2rem .5rem; border-radius:.4rem }
+.gcard .gc-chip{ width:2.6rem; height:2rem; border-radius:.4rem; background:linear-gradient(135deg,#d6c27a,#9a8341); position:relative; z-index:2; box-shadow:inset 0 0 0 1px rgba(255,255,255,.3) }
+.gcard .gc-chip::after{ content:''; position:absolute; inset:.35rem .6rem; border:1px solid rgba(0,0,0,.25); border-radius:2px }
+.gcard .gc-num{ font-family:var(--hud); font-size:1.02rem; letter-spacing:.14em; color:var(--ink); position:relative; z-index:2; text-shadow:0 1px 8px rgba(0,0,0,.5) }
+.gcard .gc-bottom{ display:flex; justify-content:space-between; align-items:flex-end; position:relative; z-index:2 }
+.gcard .gc-name{ font-family:var(--hud); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(232,234,240,.85) }
+.gcard .gc-exp{ font-family:var(--hud); font-size:.62rem; color:var(--subtle); letter-spacing:.08em }
+.gcard .gc-flow{ position:absolute; right:-2rem; bottom:-2rem; width:9rem; height:9rem; z-index:1; opacity:.5 }
+
+/* mini account panel under card */
+.acct-panel{ width:100%; max-width:23rem; border:1px solid var(--line); background:linear-gradient(180deg,rgba(16,18,24,.8),rgba(11,12,16,.8)); border-radius:var(--radius-sm); padding:1rem 1.1rem; backdrop-filter:blur(10px) }
+@media (min-width:1024px){ .acct-panel{ width:21rem } }
+.acct-panel .ap-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:.7rem }
+.acct-panel .ap-lab{ font-family:var(--hud); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--subtle) }
+.acct-panel .ap-live{ display:inline-flex; align-items:center; gap:.35rem; font-family:var(--hud); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--neon) }
+.acct-panel .ap-live .pulse{ width:.4rem; height:.4rem; border-radius:50%; background:var(--neon); box-shadow:0 0 8px var(--neon); animation:pulse 1.6s infinite }
+@keyframes pulse{ 0%,100%{ opacity:1 } 50%{ opacity:.3 } }
+.acct-panel .ap-bal{ font-family:var(--hud); font-size:1.7rem; font-weight:600; letter-spacing:-.01em; color:var(--ink) }
+.acct-panel .ap-bal .cur{ color:var(--neon); font-size:1.1rem; vertical-align:.1em; margin-right:.15rem }
+.acct-panel .ap-spark{ margin-top:.7rem; height:2.2rem; width:100% }
+
+/* ============ STATS / INFO STRIP ============ */
+.kpi-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:0 }
+@media (min-width:1024px){ .kpi-grid{ grid-template-columns:repeat(4,1fr) } }
+.kpi{ padding:2.2rem 1.8rem; border-top:1px solid var(--line); border-left:1px solid var(--line); position:relative }
+.kpi .kpi-num{ font-size:3rem; color:var(--ink) }
+@media (min-width:640px){ .kpi .kpi-num{ font-size:3.6rem } }
+.kpi .kpi-num .suf{ color:var(--neon); font-size:.5em; vertical-align:.4em }
+.kpi .kpi-lab{ margin-top:.6rem; font-family:var(--hud); font-size:.72rem; letter-spacing:.06em; color:var(--muted); text-transform:uppercase }
+.kpi .kpi-tag{ position:absolute; top:1rem; right:1.4rem; font-family:var(--hud); font-size:.6rem; color:var(--subtle) }
+
+/* ============ SECTION HEAD ============ */
+.sec-head{ display:flex; flex-direction:column; gap:1.2rem; max-width:46rem }
+.sec-head h2{ font-size:2.4rem; font-weight:600; letter-spacing:-.025em; line-height:1.04 }
+@media (min-width:640px){ .sec-head h2{ font-size:3.2rem } }
+.sec-head p{ color:var(--muted); max-width:40rem; line-height:1.55; font-size:1rem }
+
+/* ============ LENDING / CREDIT CALC ============ */
+.credit-wrap{ display:grid; grid-template-columns:1fr; gap:1.5rem }
+@media (min-width:1024px){ .credit-wrap{ grid-template-columns:1.15fr .85fr; gap:2rem; align-items:stretch } }
+.calc{ border:1px solid var(--line); background:linear-gradient(180deg,var(--panel-2),var(--panel)); border-radius:var(--radius-card); padding:2rem; position:relative; overflow:hidden }
+.calc::before{ content:''; position:absolute; inset:0; background:radial-gradient(60% 50% at 100% 0%,rgba(123,92,255,.12),transparent 60%); pointer-events:none }
+.calc h3{ font-size:1.3rem; font-weight:600; letter-spacing:-.01em; margin-bottom:.4rem; position:relative }
+.calc .calc-hint{ font-family:var(--hud); font-size:.72rem; color:var(--subtle); margin-bottom:1.8rem; position:relative }
+.field{ margin-bottom:1.6rem; position:relative }
+.field .frow{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:.8rem }
+.field .flab{ font-family:var(--hud); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
+.field .fval{ font-family:var(--hud); font-size:1.15rem; font-weight:600; color:var(--neon) }
+input[type=range]{ -webkit-appearance:none; appearance:none; width:100%; height:3px; border-radius:3px; background:var(--line-bright); outline:none; cursor:pointer }
+input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:1.3rem; height:1.3rem; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,#00e5d4 60%,#0a8f86); box-shadow:0 0 0 4px rgba(0,229,212,.18),0 0 14px rgba(0,229,212,.6); border:none }
+input[type=range]::-moz-range-thumb{ width:1.3rem; height:1.3rem; border:none; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,#00e5d4 60%,#0a8f86); box-shadow:0 0 0 4px rgba(0,229,212,.18),0 0 14px rgba(0,229,212,.6) }
+.term-seg{ display:flex; gap:.5rem; flex-wrap:wrap }
+.term-seg button{ font-family:var(--hud); font-size:.78rem; padding:.55rem .95rem; border-radius:.6rem; border:1px solid var(--line-bright); color:var(--muted); transition:all .2s }
+.term-seg button.on{ border-color:var(--neon); color:var(--neon); background:rgba(0,229,212,.08) }
+.term-seg button:hover{ color:var(--ink) }
+
+.calc-out{ border:1px solid var(--line-bright); background:linear-gradient(180deg,rgba(0,229,212,.05),rgba(11,12,16,.6)); border-radius:var(--radius-card); padding:2rem; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden }
+.calc-out::after{ content:''; position:absolute; inset:0; background:repeating-linear-gradient(115deg,transparent 0 10px,rgba(255,255,255,.015) 10px 11px); pointer-events:none }
+.calc-out .co-lab{ font-family:var(--hud); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--subtle) }
+.calc-out .co-pay{ font-family:var(--hud); font-size:3.2rem; font-weight:600; letter-spacing:-.02em; color:var(--ink); line-height:1; margin:.4rem 0 .2rem }
+.calc-out .co-pay .cur{ color:var(--neon); font-size:.4em; vertical-align:.5em }
+.calc-out .co-per{ font-family:var(--hud); font-size:.72rem; color:var(--muted) }
+.calc-out .co-break{ margin:1.6rem 0; display:flex; flex-direction:column; gap:.7rem }
+.calc-out .co-line{ display:flex; justify-content:space-between; font-family:var(--hud); font-size:.78rem; padding-bottom:.7rem; border-bottom:1px dashed var(--line) }
+.calc-out .co-line .k{ color:var(--muted) }
+.calc-out .co-line .v{ color:var(--ink); font-weight:500 }
+
+/* ============ CARDS ISSUE ============ */
+.cards-row{ display:grid; grid-template-columns:1fr; gap:1.5rem }
+@media (min-width:768px){ .cards-row{ grid-template-columns:repeat(3,1fr) } }
+.prod-card{ position:relative; border-radius:var(--radius-card); padding:1.6rem; overflow:hidden; min-height:21rem; display:flex; flex-direction:column; justify-content:space-between; border:1px solid var(--line-bright); transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s }
+.prod-card:hover{ transform:translateY(-8px) }
+.prod-card .pc-visual{ position:relative; height:8.5rem; border-radius:var(--radius-sm); overflow:hidden; margin-bottom:1.3rem; display:grid; place-items:center; border:1px solid rgba(255,255,255,.08) }
+.prod-card .mini-card{ width:78%; aspect-ratio:1.586/1; border-radius:.7rem; position:relative; transform:rotate(-6deg); box-shadow:0 16px 36px -14px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.25); transition:transform .5s cubic-bezier(.2,.8,.2,1) }
+.prod-card:hover .mini-card{ transform:rotate(-3deg) translateY(-4px) scale(1.03) }
+.prod-card .mini-card .mc-logo{ position:absolute; top:.6rem; left:.7rem; display:flex; align-items:center; gap:.3rem; font-size:.6rem; font-weight:600 }
+.prod-card .mini-card .mc-num{ position:absolute; bottom:.55rem; left:.7rem; font-family:var(--hud); font-size:.5rem; letter-spacing:.1em; opacity:.85 }
+.prod-card h3{ font-size:1.35rem; font-weight:600; letter-spacing:-.01em; margin-bottom:.4rem }
+.prod-card .pc-desc{ font-size:.85rem; color:var(--muted); line-height:1.45; margin-bottom:1.1rem }
+.prod-card .pc-feats{ display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.3rem }
+.prod-card .pc-feat{ display:flex; align-items:center; gap:.5rem; font-family:var(--hud); font-size:.72rem; color:var(--muted) }
+.prod-card .pc-feat svg{ color:var(--neon); flex:none }
+.prod-card .pc-foot{ display:flex; align-items:center; justify-content:space-between }
+.prod-card .pc-fee{ font-family:var(--hud); font-size:.7rem; color:var(--subtle) }
+.prod-card .pc-fee b{ color:var(--ink); font-size:1.05rem; font-weight:600 }
+.prod-card .pc-btn{ width:2.6rem; height:2.6rem; display:grid; place-items:center; border-radius:50%; background:var(--ink); color:var(--void); transition:transform .35s }
+.prod-card:hover .pc-btn{ transform:rotate(45deg) }
+/* variants */
+.prod-card.v-graphite{ background:linear-gradient(160deg,#16181f,#0b0c10) }
+.prod-card.v-graphite .pc-visual{ background:radial-gradient(circle at 50% 40%,#22252e,#0b0c10) }
+.prod-card.v-graphite .mini-card{ background:linear-gradient(135deg,#3a3f4c,#15171d) }
+.prod-card.v-graphite .mc-logo svg{ color:var(--chrome-hi) }
+.prod-card.v-neon{ background:linear-gradient(160deg,#04241f,#071a17); border-color:rgba(0,229,212,.3); box-shadow:inset 0 0 40px rgba(0,229,212,.06) }
+.prod-card.v-neon .pc-visual{ background:radial-gradient(circle at 50% 40%,rgba(0,229,212,.16),#071a17) }
+.prod-card.v-neon .mini-card{ background:linear-gradient(135deg,#00e5d4,#0a8f86) }
+.prod-card.v-neon .mc-logo{ color:#04201d }
+.prod-card.v-neon .mc-num{ color:#04201d }
+.prod-card.v-violet{ background:linear-gradient(160deg,#17122e,#0c0a1a); border-color:rgba(123,92,255,.3) }
+.prod-card.v-violet .pc-visual{ background:radial-gradient(circle at 50% 40%,rgba(123,92,255,.18),#0c0a1a) }
+.prod-card.v-violet .mini-card{ background:linear-gradient(135deg,#9d83ff,#4733a8) }
+.prod-card.v-violet .mc-logo svg{ color:#fff }
+
+/* ============ FLOW SECTION ============ */
+.flow-panel{ position:relative; border:1px solid var(--line); border-radius:var(--radius-card); overflow:hidden; background:linear-gradient(180deg,#080a0f,#050507); min-height:24rem }
+#flow-canvas{ position:absolute; inset:0; width:100%; height:100% }
+.flow-overlay{ position:relative; z-index:3; padding:2.4rem; display:flex; flex-direction:column; justify-content:space-between; min-height:24rem; pointer-events:none }
+.flow-overlay .fo-stats{ display:flex; gap:2.5rem; flex-wrap:wrap; margin-top:auto }
+.flow-overlay .fo-stat .n{ font-family:var(--hud); font-size:1.8rem; font-weight:600; color:var(--ink) }
+.flow-overlay .fo-stat .n .u{ color:var(--neon); font-size:.6em }
+.flow-overlay .fo-stat .l{ font-family:var(--hud); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--subtle); margin-top:.3rem }
+
+/* ============ CAREERS ============ */
+.career-wrap{ display:grid; grid-template-columns:1fr; gap:2rem }
+@media (min-width:1024px){ .career-wrap{ grid-template-columns:.9fr 1.1fr; gap:3rem; align-items:start } }
+.roles{ display:flex; flex-direction:column }
+.role{ display:flex; align-items:center; gap:1.2rem; padding:1.5rem 0; border-top:1px solid var(--line); cursor:pointer; transition:padding .35s cubic-bezier(.2,.8,.2,1) }
+.role:hover{ padding-inline:1rem; background:linear-gradient(90deg,rgba(0,229,212,.04),transparent) }
+.role .r-idx{ font-family:var(--hud); font-size:.78rem; color:var(--subtle); width:2rem; flex:none }
+.role .r-mid{ flex:1 }
+.role .r-title{ font-size:1.3rem; font-weight:500; letter-spacing:-.01em }
+@media (min-width:640px){ .role .r-title{ font-size:1.55rem } }
+.role .r-meta{ display:flex; gap:.7rem; margin-top:.4rem; flex-wrap:wrap }
+.role .r-arrow{ width:2.6rem; height:2.6rem; display:grid; place-items:center; border-radius:50%; border:1px solid var(--line-bright); color:var(--muted); flex:none; transition:all .35s }
+.role:hover .r-arrow{ background:var(--neon); color:#04201d; border-color:var(--neon); transform:translateX(4px) }
+
+.apply-card{ border:1px solid var(--line-bright); background:linear-gradient(180deg,var(--panel-2),var(--panel)); border-radius:var(--radius-card); padding:2rem; position:relative; overflow:hidden }
+.apply-card::before{ content:''; position:absolute; inset:0; background:radial-gradient(50% 40% at 0% 0%,rgba(0,229,212,.1),transparent 60%); pointer-events:none }
+.apply-card .ac-head{ display:flex; align-items:center; gap:.6rem; margin-bottom:.4rem; position:relative }
+.apply-card .ac-head .dot{ width:.45rem; height:.45rem; border-radius:50%; background:var(--neon); box-shadow:0 0 8px var(--neon) }
+.apply-card .ac-head span{ font-family:var(--hud); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
+.apply-card h3{ font-size:1.5rem; font-weight:600; letter-spacing:-.01em; margin-bottom:1.6rem; position:relative }
+
+/* form controls (shared with modal) */
+.fld{ margin-bottom:1.1rem; display:flex; flex-direction:column; gap:.5rem }
+.fld label{ font-family:var(--hud); font-size:.66rem; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--subtle) }
+.ctrl{ width:100%; border:1px solid var(--line-bright); background:rgba(5,5,7,.6); border-radius:var(--radius-ctrl); padding:.85rem 1rem; font-size:.9rem; color:var(--ink); outline:none; transition:border-color .25s,background .25s; font-family:'Space Grotesk',sans-serif }
+.ctrl::placeholder{ color:var(--subtle) }
+.ctrl:focus{ border-color:var(--neon); background:rgba(0,229,212,.04) }
+textarea.ctrl{ resize:none; min-height:6rem }
+select.ctrl{ appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a91a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center }
+.fld-row{ display:grid; grid-template-columns:1fr 1fr; gap:1rem }
+.form-foot{ margin-top:.6rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap }
+.form-foot .fnote{ font-family:var(--hud); font-size:.66rem; color:var(--subtle) }
+
+/* ============ FOOTER ============ */
+#ftr{ position:relative; overflow:hidden; border-radius:var(--radius-card) var(--radius-card) 0 0; background:linear-gradient(180deg,#08090d,#050507); border-top:1px solid var(--line) }
+#ftr .ft-inner{ position:relative; z-index:10; padding:5rem 1.5rem 2.5rem }
+@media (min-width:640px){ #ftr .ft-inner{ padding-inline:2.5rem } }
+@media (min-width:1024px){ #ftr .ft-inner{ padding-top:6rem; padding-inline:3rem } }
+.ft-cta{ display:flex; flex-direction:column; gap:2rem; border-bottom:1px solid var(--line); padding-bottom:4rem }
+@media (min-width:1024px){ .ft-cta{ flex-direction:row; align-items:flex-end; justify-content:space-between } }
+.ft-cta h2{ max-width:16ch; font-size:2.6rem; font-weight:600; letter-spacing:-.025em; line-height:1.02 }
+@media (min-width:640px){ .ft-cta h2{ font-size:3.4rem } }
+.ft-cols{ display:grid; grid-template-columns:1fr; gap:3rem; padding-block:4rem }
+@media (min-width:768px){ .ft-cols{ grid-template-columns:2fr 1fr 1fr 1fr } }
+.ft-brand .fb-logo{ display:flex; align-items:center; gap:.5rem; font-size:1.15rem; font-weight:600 }
+.ft-brand .fb-logo svg{ color:var(--neon) }
+.ft-brand p{ max-width:22rem; margin-top:1rem; font-size:.88rem; color:var(--muted); line-height:1.5 }
+.ft-col h4{ font-family:var(--hud); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--subtle); margin-bottom:1.1rem }
+.ft-col a{ display:block; font-size:.88rem; color:var(--muted); padding:.35rem 0; transition:color .25s,transform .25s }
+.ft-col a:hover{ color:var(--neon); transform:translateX(4px) }
+.ft-legal{ display:flex; flex-direction:column; align-items:center; gap:1rem; border-top:1px solid var(--line); padding-top:2rem; font-family:var(--hud); font-size:.68rem; color:var(--subtle) }
+@media (min-width:640px){ .ft-legal{ flex-direction:row; justify-content:space-between } }
+.ft-legal .ll{ display:flex; gap:1.5rem }
+.ft-legal a:hover{ color:var(--neon) }
+.ft-mark{ position:absolute; inset-inline:0; bottom:-2rem; z-index:0; text-align:center; pointer-events:none; user-select:none; font-weight:700; line-height:1; font-size:13rem; letter-spacing:-.04em; color:rgba(255,255,255,.025) }
+
+/* ============ NAV OVERLAY ============ */
+#nav{ position:fixed; inset:0; z-index:150; display:flex; flex-direction:column; background:radial-gradient(ellipse 80% 70% at 50% 30%,#0b0d13,#050507); opacity:0; pointer-events:none; transition:opacity .45s cubic-bezier(.22,1,.36,1) }
+#nav.open{ opacity:1; pointer-events:auto }
+#nav .nv-top{ display:flex; align-items:center; justify-content:space-between; padding-block:1.4rem }
+#nav .nv-brand{ display:flex; align-items:center; gap:.6rem; font-size:1.15rem; font-weight:600 }
+#nav .nv-brand svg{ color:var(--neon) }
+.close-btn{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--line-bright); border-radius:var(--radius-ctrl); padding:.55rem 1rem; font-family:var(--hud); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); transition:border-color .25s,color .25s }
+.close-btn:hover{ border-color:var(--neon); color:var(--ink) }
+#nav .nv-mid{ flex:1; display:flex; flex-direction:column; justify-content:center }
+#nav .nv-list{ display:flex; flex-direction:column; gap:.2rem }
+#nav .nv-item{ display:flex; align-items:center; gap:1.2rem; padding-block:.45rem; text-align:left; font-size:2.4rem; font-weight:600; letter-spacing:-.025em; transform:translateY(1rem); opacity:0; transition:transform .5s ease-out,opacity .5s ease-out }
+@media (min-width:640px){ #nav .nv-item{ font-size:3.6rem } }
+#nav.open .nv-item{ transform:none; opacity:1 }
+#nav .nv-item .nv-idx{ font-family:var(--hud); font-size:1rem; font-weight:400; color:var(--subtle); transition:color .3s }
+#nav .nv-item .nv-lbl{ color:var(--muted); transition:color .3s }
+#nav .nv-item:hover .nv-idx{ color:var(--neon) }
+#nav .nv-item:hover .nv-lbl{ color:var(--ink) }
+#nav .nv-bot{ display:flex; flex-direction:column; gap:.75rem; border-top:1px solid var(--line); padding-block:1.5rem; font-family:var(--hud); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--subtle) }
+@media (min-width:640px){ #nav .nv-bot{ flex-direction:row; justify-content:space-between } }
+#nav .nv-bot button{ color:var(--muted); transition:color .25s }
+#nav .nv-bot button:hover{ color:var(--neon) }
+
+/* ============ MODAL ============ */
+#modal{ position:fixed; inset:0; z-index:180; display:flex; align-items:flex-end; justify-content:center; padding:1rem; background:rgba(5,5,7,.6); backdrop-filter:blur(14px); opacity:0; pointer-events:none; transition:opacity .4s ease }
+@media (min-width:640px){ #modal{ align-items:center } }
+#modal.open{ opacity:1; pointer-events:auto }
+.modal-panel{ position:relative; width:100%; max-width:33rem; overflow:hidden; border-radius:var(--radius-card); background:linear-gradient(180deg,#0d0f15,#08090d); border:1px solid var(--line-bright); padding:1.8rem; box-shadow:0 40px 120px -30px rgba(0,229,212,.25); transform:translateY(28px); transition:transform .45s cubic-bezier(.22,1,.36,1) }
+@media (min-width:640px){ .modal-panel{ padding:2.2rem } }
+#modal.open .modal-panel{ transform:none }
+.modal-panel::before{ content:''; position:absolute; inset:0; background:radial-gradient(50% 40% at 100% 0%,rgba(123,92,255,.12),transparent 55%); pointer-events:none }
+.modal-x{ position:absolute; right:1.1rem; top:1.1rem; width:2.4rem; height:2.4rem; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,.05); color:var(--muted); transition:background .25s,color .25s; z-index:5 }
+.modal-x:hover{ background:rgba(255,255,255,.12); color:var(--ink) }
+.modal-head{ margin-bottom:1.5rem; position:relative }
+.modal-eye{ display:inline-flex; align-items:center; gap:.5rem; font-family:var(--hud); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:.6rem }
+.modal-eye .dot{ width:.42rem; height:.42rem; border-radius:50%; background:var(--neon); box-shadow:0 0 8px var(--neon) }
+.modal-head h2{ font-size:1.5rem; font-weight:600; letter-spacing:-.01em }
+@media (min-width:640px){ .modal-head h2{ font-size:1.8rem } }
+.modal-success{ text-align:center; padding-block:2rem; display:flex; flex-direction:column; align-items:center; gap:1rem; position:relative }
+.modal-success .ms-badge{ width:3.6rem; height:3.6rem; display:grid; place-items:center; border-radius:50%; background:#04201d; color:var(--neon); box-shadow:0 0 30px rgba(0,229,212,.4) }
+.modal-success h2{ font-size:1.5rem; font-weight:600 }
+.modal-success p{ max-width:34ch; font-size:.88rem; color:var(--muted); line-height:1.5 }
+.modal-success .mono{ color:var(--neon) }
+
+/* ============ generic spacing for sections ============ */
+.pad-y{ padding-block:5rem }
+@media (min-width:1024px){ .pad-y{ padding-block:7rem } }
+.pad-y-sm{ padding-block:3rem }
+@media (min-width:1024px){ .pad-y-sm{ padding-block:4rem } }
+</style>
+<body>
+<a class="sr-only" href="#main" id="skip">Перейти к содержанию</a>
+
+<!-- ============ PAGE LOADER ============ -->
+<div id="loader" aria-hidden="false">
+  <div class="ldr-center">
+    <div class="ldr-brand">
+      <svg width="30" height="30" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg>
+      <span>Neon Banking</span>
+    </div>
+    <p class="ldr-tag mono">Премиальный цифровой банк будущего</p>
+  </div>
+  <div class="ldr-bar">
+    <div class="track"><div class="fill" id="ldr-fill"></div></div>
+    <div class="ldr-row">
+      <span>Инициализация ядра</span>
+      <span class="ldr-count mono" id="ldr-count">000</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header id="hdr">
+  <div class="shell">
+    <div class="bar">
+      <button class="brand-btn" data-scroll="hero" aria-label="Neon Banking — в начало">
+        <svg width="22" height="22" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg>
+        <span>Neon Banking</span>
+      </button>
+      <nav class="nav-main" aria-label="Основное меню">
+        <button data-scroll="hero" aria-current="page">Главная</button>
+        <button data-scroll="lending">Кредиты</button>
+        <button data-scroll="cards">Карты <span class="caret">▾</span></button>
+        <button data-scroll="info">О банке</button>
+        <button data-scroll="careers">Карьера</button>
+        <button data-modal="contact">Контакт</button>
+      </nav>
+      <div class="hdr-right">
+        <div class="clock-chip" aria-hidden="true">
+          <span class="lab">Время</span>
+          <span class="t mono" id="clk-time">9:41am</span>
+          <span class="dot">•</span>
+          <span class="mono" id="clk-date">12 марта, 2025</span>
+        </div>
+        <button class="menu-btn" data-nav="open" aria-label="Открыть меню">
+          <span class="inner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <span class="lbl">Меню</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- ============ HERO ============ -->
+<section id="hero">
+  <canvas id="chrome-canvas" aria-hidden="true"></canvas>
+  <div class="hero-vignette"></div>
+  <div class="scanlines"></div>
+  <div class="hero-mark chrome-text" id="hero-mark" aria-hidden="true">NEON</div>
+
+  <div class="shell hero-grid">
+    <div class="hero-left">
+      <span class="eyebrow reveal" data-d="200">Лицензия ЦБ · с 2014</span>
+      <h1 class="hero-h1">
+        <span class="line-clip" data-d="250"><span>Деньги, отлитые</span></span>
+        <span class="line-clip" data-d="370"><span>из <span class="chrome-text">жидкого&nbsp;металла</span></span></span>
+        <span class="line-clip" data-d="490"><span>будущего.</span></span>
+      </h1>
+      <p class="hero-sub reveal" data-d="620">Кредиты, которые одобряются за секунды. Стеклянные карты, которые видно в темноте. Капитал, текущий по сети в реальном времени — Neon Banking держит вашу ликвидность под напряжением.</p>
+      <div class="hero-cta reveal" data-d="740">
+        <button class="btn btn-neon btn-arrow" data-modal="contact"><span class="lbl">Открыть счёт</span><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+        <button class="btn btn-glass btn-arrow" data-scroll="cards"><span class="lbl">Смотреть карты</span><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+      </div>
+      <div class="hero-meta-row reveal" data-d="860">
+        <span><b>0.3с</b> среднее одобрение</span>
+        <span class="sep"></span>
+        <span><b>2.4М</b> клиентов в сети</span>
+        <span class="sep"></span>
+        <span><b>—</b> без отделений</span>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="gcard-wrap reveal" data-d="420">
+        <div class="gcard" id="gcard">
+          <div class="gc-top">
+            <div class="gc-brand"><svg width="16" height="16" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg> Neon</div>
+            <span class="gc-tier">Infinite</span>
+          </div>
+          <div class="gc-chip"></div>
+          <div class="gc-num">4274 ·· ·· 0142</div>
+          <div class="gc-bottom">
+            <span class="gc-name">A. Voronova</span>
+            <span class="gc-exp">VALID 09/30</span>
+          </div>
+          <svg class="gc-flow" viewBox="0 0 100 100" fill="none" stroke="rgba(0,229,212,.5)" stroke-width="1" aria-hidden="true"><circle cx="50" cy="50" r="20"/><circle cx="50" cy="50" r="32"/><circle cx="50" cy="50" r="44"/></svg>
+        </div>
+      </div>
+      <div class="acct-panel reveal" data-d="560">
+        <div class="ap-head">
+          <span class="ap-lab">Баланс · текущий</span>
+          <span class="ap-live"><span class="pulse"></span> в эфире</span>
+        </div>
+        <div class="ap-bal mono"><span class="cur">₿</span><span id="ap-bal">128 460.00</span></div>
+        <canvas class="ap-spark" id="ap-spark" aria-hidden="true"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INFO / О БАНКЕ ============ -->
+<section id="info" class="section pad-y">
+  <span class="frame-corner tl"></span><span class="frame-corner tr"></span>
+  <div class="gridlines"></div>
+  <div class="shell">
+    <div class="sec-head reveal" style="margin-bottom:3.5rem">
+      <span class="eyebrow"><span class="idx">01 /</span> Основная информация</span>
+      <h2 class="line-clip" data-d="120"><span>Банк без стен,<br>но с защитой банка.</span></h2>
+      <p>Neon Banking — это распределённая финансовая инфраструктура. Никаких отделений, очередей и бумаги: всё ядро банка живёт в защищённой сети и отвечает за миллисекунды. Лицензия Центрального банка, страхование вкладов и сквозное шифрование каждой транзакции.</p>
+    </div>
+  </div>
+  <div class="shell">
+    <ul class="kpi-grid" id="kpi-grid">
+      <li class="kpi reveal"><div class="kpi-num"><span class="cu" data-to="2400000" data-fmt="comp">0</span><span class="suf">+</span></div><div class="kpi-lab">Клиентов в сети</div><span class="kpi-tag mono">USERS</span></li>
+      <li class="kpi reveal" data-d="90"><div class="kpi-num"><span class="cu" data-to="0.3" data-dec="1">0</span><span class="suf">с</span></div><div class="kpi-lab">Среднее одобрение</div><span class="kpi-tag mono">SPEED</span></li>
+      <li class="kpi reveal" data-d="180"><div class="kpi-num"><span class="cu" data-to="99.99" data-dec="2">0</span><span class="suf">%</span></div><div class="kpi-lab">Аптайм инфраструктуры</div><span class="kpi-tag mono">UPTIME</span></li>
+      <li class="kpi reveal" data-d="270"><div class="kpi-num"><span class="cu" data-to="42" data-dec="0">0</span><span class="suf">млрд ₿</span></div><div class="kpi-lab">Активов под управлением</div><span class="kpi-tag mono">AUM</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ LENDING / КРЕДИТОВАНИЕ ============ -->
+<section id="lending" class="section pad-y">
+  <span class="frame-corner tl"></span><span class="frame-corner br"></span>
+  <div class="shell">
+    <div class="sec-head reveal" style="margin-bottom:3rem">
+      <span class="eyebrow"><span class="idx">02 /</span> Кредитование</span>
+      <h2 class="line-clip" data-d="120"><span>Кредит, который<br>считает сам себя.</span></h2>
+      <p>Подвиньте ползунки — увидите платёж в реальном времени. Ставка от 4.9%, решение за 0.3 секунды, без скрытых комиссий и поручителей. Деньги поступают на ваш Neon-счёт мгновенно после одобрения.</p>
+    </div>
+
+    <div class="credit-wrap reveal" data-d="150">
+      <div class="calc">
+        <h3>Калькулятор кредита</h3>
+        <p class="calc-hint">Параметры обновляются на лету · ставка 4.9–11.9% годовых</p>
+
+        <div class="field">
+          <div class="frow"><span class="flab">Сумма кредита</span><span class="fval mono"><span id="amt-val">1 500 000</span> ₿</span></div>
+          <input type="range" id="amt" min="100000" max="10000000" step="50000" value="1500000" aria-label="Сумма кредита">
+        </div>
+
+        <div class="field">
+          <div class="frow"><span class="flab">Срок</span><span class="fval mono"><span id="term-val">36</span> мес</span></div>
+          <div class="term-seg" id="term-seg" role="group" aria-label="Срок кредита">
+            <button data-term="12">12</button>
+            <button data-term="24">24</button>
+            <button data-term="36" class="on">36</button>
+            <button data-term="48">48</button>
+            <button data-term="60">60</button>
+            <button data-term="84">84</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="frow"><span class="flab">Цель</span><span class="fval mono" id="goal-rate">5.4%</span></div>
+          <select class="ctrl" id="goal" aria-label="Цель кредита">
+            <option value="5.4">Развитие бизнеса</option>
+            <option value="4.9">Недвижимость</option>
+            <option value="6.9">Авто и транспорт</option>
+            <option value="7.9">Образование</option>
+            <option value="9.9">На любые цели</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="calc-out">
+        <div>
+          <span class="co-lab">Ежемесячный платёж</span>
+          <div class="co-pay mono"><span class="cur">₿</span><span id="pay-val">44 920</span></div>
+          <span class="co-per">в месяц · аннуитет</span>
+        </div>
+        <div class="co-break">
+          <div class="co-line"><span class="k">Ставка</span><span class="v mono" id="out-rate">5.4% годовых</span></div>
+          <div class="co-line"><span class="k">Переплата</span><span class="v mono" id="out-over">117 120 ₿</span></div>
+          <div class="co-line"><span class="k">Всего к возврату</span><span class="v mono" id="out-total">1 617 120 ₿</span></div>
+        </div>
+        <button class="btn btn-neon btn-arrow" style="width:100%; justify-content:space-between" data-modal="credit"><span class="lbl">Оформить заявку на кредит</span><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CARDS / ВЫПУСК КАРТ ============ -->
+<section id="cards" class="section pad-y">
+  <span class="frame-corner tr"></span><span class="frame-corner bl"></span>
+  <div class="shell">
+    <div class="sec-head reveal" style="margin-bottom:3rem">
+      <span class="eyebrow"><span class="idx">03 /</span> Выпуск карт</span>
+      <h2 class="line-clip" data-d="120"><span>Карты из стекла<br>и чистого света.</span></h2>
+      <p>Прозрачный поликарбонат, неоновая кромка и NFC-ядро. Виртуальная карта выпускается мгновенно, физическая — приезжает курьером за день. Выбирайте уровень — обслуживание подстраивается под вас.</p>
+    </div>
+
+    <div class="cards-row">
+      <!-- Graphite -->
+      <div class="prod-card v-graphite reveal" data-d="0">
+        <div>
+          <div class="pc-visual">
+            <div class="mini-card">
+              <div class="mc-logo"><svg width="9" height="9" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg> Neon</div>
+              <div class="mc-num">0000 ·· ·· 0000</div>
+            </div>
+          </div>
+          <h3>Graphite</h3>
+          <p class="pc-desc">База для ежедневных трат. Кэшбэк 1.5% и бесплатные переводы внутри сети.</p>
+          <div class="pc-feats">
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Кэшбэк до 1.5%</div>
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Виртуальная карта сразу</div>
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Снятие без комиссии</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <span class="pc-fee">обслуживание<br><b>0 ₿/мес</b></span>
+          <button class="pc-btn" data-modal="card" data-card="Graphite" aria-label="Выпустить карту Graphite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Neon (featured) -->
+      <div class="prod-card v-neon reveal" data-d="90">
+        <div>
+          <div class="pc-visual">
+            <span class="chip neon" style="position:absolute;top:.7rem;right:.7rem;z-index:3">Хит</span>
+            <div class="mini-card">
+              <div class="mc-logo"><svg width="9" height="9" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg> Neon</div>
+              <div class="mc-num">0000 ·· ·· 0000</div>
+            </div>
+          </div>
+          <h3>Neon Glass</h3>
+          <p class="pc-desc">Прозрачная карта со светящейся кромкой. Кэшбэк 5% и доступ в лаунжи.</p>
+          <div class="pc-feats">
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Кэшбэк до 5%</div>
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Бизнес-залы аэропортов</div>
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Персональный менеджер</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <span class="pc-fee">обслуживание<br><b>490 ₿/мес</b></span>
+          <button class="pc-btn" data-modal="card" data-card="Neon Glass" aria-label="Выпустить карту Neon Glass"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Violet -->
+      <div class="prod-card v-violet reveal" data-d="180">
+        <div>
+          <div class="pc-visual">
+            <div class="mini-card">
+              <div class="mc-logo"><svg width="9" height="9" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg> Neon</div>
+              <div class="mc-num">0000 ·· ·· 0000</div>
+            </div>
+          </div>
+          <h3>Infinite</h3>
+          <p class="pc-desc">Карта для капитала без потолка. Консьерж 24/7 и приватные условия.</p>
+          <div class="pc-feats">
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Кэшбэк до 8%</div>
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Консьерж-сервис 24/7</div>
+            <div class="pc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Лимиты без ограничений</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <span class="pc-fee">обслуживание<br><b>2 900 ₿/мес</b></span>
+          <button class="pc-btn" data-modal="card" data-card="Infinite" aria-label="Выпустить карту Infinite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINANCIAL FLOWS ============ -->
+<section class="section pad-y-sm">
+  <div class="shell">
+    <div class="flow-panel reveal">
+      <canvas id="flow-canvas" aria-hidden="true"></canvas>
+      <div class="flow-overlay">
+        <div style="max-width:34rem">
+          <span class="eyebrow">Потоки капитала · в реальном времени</span>
+          <h2 style="font-size:2rem;font-weight:600;letter-spacing:-.02em;margin-top:1.1rem;line-height:1.1">Ваши деньги не лежат —<br>они движутся по сети.</h2>
+        </div>
+        <div class="fo-stats">
+          <div class="fo-stat"><div class="n mono"><span id="flow-tps">1 284</span><span class="u">/с</span></div><div class="l">Транзакций сейчас</div></div>
+          <div class="fo-stat"><div class="n mono">8<span class="u">мс</span></div><div class="l">Задержка перевода</div></div>
+          <div class="fo-stat"><div class="n mono">64<span class="u">узла</span></div><div class="l">Точек обработки</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAREERS / ЗАЯВКА НА РАБОТУ ============ -->
+<section id="careers" class="section pad-y">
+  <span class="frame-corner tl"></span><span class="frame-corner br"></span>
+  <div class="shell">
+    <div class="sec-head reveal" style="margin-bottom:3rem">
+      <span class="eyebrow"><span class="idx">04 /</span> Карьера</span>
+      <h2 class="line-clip" data-d="120"><span>Соберите банк,<br>которого ещё не было.</span></h2>
+      <p>Мы небольшая распределённая команда, которая строит финансы будущего. Если вам тесно в классических банках — оставьте заявку, мы рассмотрим её в течение двух рабочих дней.</p>
+    </div>
+
+    <div class="career-wrap">
+      <ul class="roles reveal" data-d="100">
+        <li class="role" data-role="Senior Frontend Engineer">
+          <span class="r-idx mono">01</span>
+          <div class="r-mid">
+            <div class="r-title">Senior Frontend Engineer</div>
+            <div class="r-meta"><span class="chip">Remote</span><span class="chip">Full-time</span><span class="chip neon">Инженерия</span></div>
+          </div>
+          <span class="r-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        </li>
+        <li class="role" data-role="Product Designer">
+          <span class="r-idx mono">02</span>
+          <div class="r-mid">
+            <div class="r-title">Product Designer</div>
+            <div class="r-meta"><span class="chip">Remote</span><span class="chip">Full-time</span><span class="chip neon">Дизайн</span></div>
+          </div>
+          <span class="r-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        </li>
+        <li class="role" data-role="Risk & Credit Analyst">
+          <span class="r-idx mono">03</span>
+          <div class="r-mid">
+            <div class="r-title">Risk &amp; Credit Analyst</div>
+            <div class="r-meta"><span class="chip">Гибрид</span><span class="chip">Full-time</span><span class="chip neon">Риски</span></div>
+          </div>
+          <span class="r-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        </li>
+        <li class="role" data-role="Security Engineer">
+          <span class="r-idx mono">04</span>
+          <div class="r-mid">
+            <div class="r-title">Security Engineer</div>
+            <div class="r-meta"><span class="chip">Remote</span><span class="chip">Full-time</span><span class="chip neon">Безопасность</span></div>
+          </div>
+          <span class="r-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        </li>
+      </ul>
+
+      <div class="apply-card reveal" data-d="200">
+        <div class="ac-head"><span class="dot"></span><span>Заявка на рассмотрение</span></div>
+        <h3>Оставьте заявку</h3>
+        <form id="career-form" novalidate>
+          <div class="fld-row">
+            <div class="fld"><label for="cf-name">Имя и фамилия</label><input class="ctrl" id="cf-name" type="text" required placeholder="Анна Воронова"></div>
+            <div class="fld"><label for="cf-email">Email</label><input class="ctrl" id="cf-email" type="email" required placeholder="you@mail.com"></div>
+          </div>
+          <div class="fld"><label for="cf-role">Желаемая позиция</label>
+            <select class="ctrl" id="cf-role" required>
+              <option value="Senior Frontend Engineer">Senior Frontend Engineer</option>
+              <option value="Product Designer">Product Designer</option>
+              <option value="Risk & Credit Analyst">Risk &amp; Credit Analyst</option>
+              <option value="Security Engineer">Security Engineer</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </div>
+          <div class="fld"><label for="cf-link">Портфолио / LinkedIn / GitHub</label><input class="ctrl" id="cf-link" type="text" placeholder="ссылка на ваши работы"></div>
+          <div class="fld"><label for="cf-about">Пара слов о себе</label><textarea class="ctrl" id="cf-about" rows="3" placeholder="Чем занимались, что хотите строить."></textarea></div>
+          <div class="form-foot">
+            <span class="fnote">Рассмотрим за 2 рабочих дня</span>
+            <button class="btn btn-neon btn-arrow" type="submit"><span class="lbl" id="cf-submit-lbl">Отправить заявку</span><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+          </div>
+        </form>
+        <div id="career-success" style="display:none" class="modal-success">
+          <div class="ms-badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h2>Заявка принята</h2>
+          <p>Спасибо! Мы получили вашу заявку и свяжемся в течение <span class="mono">2 рабочих дней</span>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer id="ftr">
+  <div class="shell ft-inner">
+    <div class="ft-cta">
+      <h2 class="line-clip" data-d="100"><span>Готовы перевести деньги<br>в будущее?</span></h2>
+      <button class="btn btn-light btn-arrow" data-modal="contact"><span class="lbl">Открыть счёт</span><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+    </div>
+    <div class="ft-cols">
+      <div class="ft-brand">
+        <div class="fb-logo"><svg width="22" height="22" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg> Neon Banking</div>
+        <p>Премиальный цифровой банк будущего. Кредиты, стеклянные карты и капитал, текущий по сети в реальном времени.</p>
+      </div>
+      <div class="ft-col">
+        <h4>Продукты</h4>
+        <a data-scroll="lending">Кредиты</a>
+        <a data-scroll="cards">Карты</a>
+        <a data-scroll="info">Счета</a>
+        <a data-modal="contact">Бизнесу</a>
+      </div>
+      <div class="ft-col">
+        <h4>Компания</h4>
+        <a data-scroll="info">О банке</a>
+        <a data-scroll="careers">Карьера</a>
+        <a href="#press">Пресс-центр</a>
+        <a data-modal="contact">Контакты</a>
+      </div>
+      <div class="ft-col">
+        <h4>Связь</h4>
+        <a href="#tg">Telegram</a>
+        <a href="#x">X / Twitter</a>
+        <a href="#in">LinkedIn</a>
+        <a href="#support">Поддержка 24/7</a>
+      </div>
+    </div>
+    <div class="ft-legal">
+      <span>© 2025 Neon Banking. Лицензия ЦБ № 0142. Вклады застрахованы.</span>
+      <span class="ll"><a href="#privacy">Конфиденциальность</a><a href="#terms">Условия</a></span>
+    </div>
+  </div>
+  <div class="ft-mark chrome-text" aria-hidden="true">NEON</div>
+</footer>
+
+<!-- ============ NAV OVERLAY ============ -->
+<div id="nav" aria-hidden="true">
+  <div class="shell nv-top">
+    <div class="nv-brand"><svg width="22" height="22" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg> Neon Banking</div>
+    <button class="close-btn" data-nav="close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20"/></svg> Закрыть</button>
+  </div>
+  <div class="shell nv-mid">
+    <ul class="nv-list">
+      <li><button class="nv-item" data-scroll="hero"><span class="nv-idx">01</span><span class="nv-lbl">Главная</span></button></li>
+      <li><button class="nv-item" data-scroll="lending"><span class="nv-idx">02</span><span class="nv-lbl">Кредиты</span></button></li>
+      <li><button class="nv-item" data-scroll="cards"><span class="nv-idx">03</span><span class="nv-lbl">Карты</span></button></li>
+      <li><button class="nv-item" data-scroll="info"><span class="nv-idx">04</span><span class="nv-lbl">О банке</span></button></li>
+      <li><button class="nv-item" data-scroll="careers"><span class="nv-idx">05</span><span class="nv-lbl">Карьера</span></button></li>
+      <li><button class="nv-item" data-modal="contact"><span class="nv-idx">06</span><span class="nv-lbl">Контакт</span></button></li>
+    </ul>
+  </div>
+  <div class="shell nv-bot">
+    <span id="nav-clock">Местное время</span>
+    <button data-modal="contact">Открыть счёт →</button>
+  </div>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div id="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+  <div class="modal-panel" id="modal-panel">
+    <button class="modal-x" data-modal-close aria-label="Закрыть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20"/></svg></button>
+    <div id="modal-form-wrap">
+      <div class="modal-head">
+        <span class="modal-eye"><span class="dot"></span><span id="modal-kicker">Открыть счёт</span></span>
+        <h2 id="modal-title">Оставьте заявку.</h2>
+      </div>
+      <form id="modal-form" novalidate>
+        <div class="fld"><label for="m-name">Имя</label><input class="ctrl" id="m-name" type="text" required placeholder="Ваше имя"></div>
+        <div class="fld"><label for="m-email">Email</label><input class="ctrl" id="m-email" type="email" required placeholder="you@mail.com"></div>
+        <div class="fld"><label for="m-phone">Телефон</label><input class="ctrl" id="m-phone" type="tel" placeholder="+7 ___ ___ __ __"></div>
+        <div class="fld" id="m-msg-wrap"><label for="m-msg" id="m-msg-label">Комментарий</label><textarea class="ctrl" id="m-msg" rows="3" placeholder="Коротко о вашем запросе."></textarea></div>
+        <div class="form-foot">
+          <span class="fnote" id="modal-note">Ответим в течение одного рабочего дня</span>
+          <button class="btn btn-neon btn-arrow" type="submit"><span class="lbl" id="modal-submit-lbl">Отправить заявку</span><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+        </div>
+      </form>
+    </div>
+    <div id="modal-success" style="display:none" class="modal-success">
+      <div class="ms-badge"><svg width="22" height="22" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg></div>
+      <h2>Заявка принята</h2>
+      <p>Спасибо за обращение — мы свяжемся с вами в течение <span class="mono">одного рабочего дня</span>.</p>
+      <button class="btn btn-glass btn-plain" data-modal-close><span class="lbl">Закрыть</span></button>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": { "lenis": "https://unpkg.com/lenis@1.3.23/dist/lenis.mjs" } }
+</script>
+<script type="module">
+import Lenis from 'lenis';
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const hasHover = matchMedia('(hover:hover)').matches;
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+
+/* ---------- Lenis smooth scroll ---------- */
+window.scrollTo(0,0);
+const lenis = new Lenis({ smoothWheel:true, lerp:0.09 });
+function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+
+let scrollEnabled = false;
+function stopScroll(){ lenis.stop(); const h=document.documentElement; h.style.position='relative'; h.style.overflow='hidden'; h.style.height='100%'; }
+function startScroll(){ lenis.start(); const h=document.documentElement; h.style.removeProperty('position'); h.style.removeProperty('overflow'); h.style.removeProperty('height'); scrollEnabled=true; }
+
+function scrollToId(id){
+  const el = document.getElementById(id); if(!el) return;
+  const wasOpen = scrollEnabled;
+  setTimeout(()=>{
+    const top = el.getBoundingClientRect().top + window.pageYOffset;
+    if(wasOpen) lenis.scrollTo(top,{ duration:1.1 });
+    else window.scrollTo({ top, behavior:'smooth' });
+  },50);
+}
+
+/* ---------- Adaptive grid (scale up >1920) ---------- */
+function applyAdaptiveGrid(){
+  const FONT_BASE=16, baseWidth=1920, coef=0.6666;
+  const w=window.innerWidth;
+  const widthReduction=((baseWidth-w)/baseWidth)*100;
+  const size=FONT_BASE-(FONT_BASE*(widthReduction*coef))/100;
+  if(size>FONT_BASE) document.documentElement.style.fontSize=size+'px';
+  else document.documentElement.style.removeProperty('font-size');
+}
+applyAdaptiveGrid(); addEventListener('resize',applyAdaptiveGrid);
+
+/* ---------- tiny rAF spring (number) ---------- */
+function spring(from,to,opts,onUpdate,onRest){
+  const tension=opts.tension??210, friction=opts.friction??26;
+  let x=from, v=0; const dt=1/60; let raf; let iter=0;
+  const range=Math.abs(to-from)||1;
+  function step(){
+    iter++;
+    const a=tension*(to-x)-friction*v;
+    v+=a*dt; x+=v*dt;
+    onUpdate(x);
+    if((Math.abs(to-x)<0.004*range && Math.abs(v)<0.02*range) || iter>1200){ onUpdate(to); onRest&&onRest(); return; }
+    raf=requestAnimationFrame(step);
+  }
+  step();
+  return ()=>cancelAnimationFrame(raf);
+}
+
+/* ---------- LIVE CLOCK ---------- */
+const months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+function fmtTime(d){ let h=d.getHours(); const m=String(d.getMinutes()).padStart(2,'0'); const mer=h>=12?'pm':'am'; h=h%12||12; return `${h}:${m}${mer}`; }
+function fmtDate(d){ return `${d.getDate()} ${months[d.getMonth()]}, ${d.getFullYear()}`; }
+function tick(){
+  const d=new Date();
+  const t=fmtTime(d), dt=fmtDate(d);
+  const ct=$('#clk-time'), cd=$('#clk-date'), nc=$('#nav-clock');
+  if(ct) ct.textContent=t; if(cd) cd.textContent=dt;
+  if(nc) nc.textContent=`Местное время — ${t}`;
+}
+tick(); setInterval(tick,1000);
+
+/* ---------- intro ready flag ---------- */
+let ready=false;
+const readyCbs=[];
+function onReady(cb){ if(ready) cb(); else readyCbs.push(cb); }
+function fireReady(){ ready=true; readyCbs.forEach(c=>c()); }
+
+/* ---------- PAGE LOADER ---------- */
+(function loader(){
+  const el=$('#loader'), fill=$('#ldr-fill'), count=$('#ldr-count');
+  const center=el.querySelector('.ldr-center');
+  stopScroll();
+  const FILL_MS=1300;
+  const easeInOut=t=> t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  if(reduce){
+    fill.style.width='100%'; count.textContent='100';
+    el.style.transform='translateY(-100%)';
+    setTimeout(()=>{ el.remove(); startScroll(); fireReady(); },50);
+    return;
+  }
+  const t0=performance.now();
+  function step(now){
+    const p=Math.min((now-t0)/FILL_MS,1);
+    const v=Math.round(easeInOut(p)*100);
+    fill.style.width=v+'%';
+    count.textContent=String(v).padStart(3,'0');
+    if(p<1){ requestAnimationFrame(step); }
+    else exit();
+  }
+  function exit(){
+    center.style.opacity='0'; center.style.transform='translateY(-12px)';
+    // normalized 0->1 spring, mapped to translateY 0% -> -100% (stable integration)
+    spring(0,1,{tension:220,friction:30},(p)=>{ el.style.transform=`translateY(${(-100*p).toFixed(2)}%)`; },()=>{
+      el.style.transform='translateY(-100%)';
+      el.remove(); startScroll(); fireReady();
+    });
+  }
+  requestAnimationFrame(step);
+  // safety net: never trap scroll
+  setTimeout(()=>{ if(document.body.contains(el)){ el.remove(); if(!ready){ startScroll(); fireReady(); } } }, 4000);
+})();
+
+/* ---------- header entrance ---------- */
+onReady(()=> setTimeout(()=> $('#hdr').classList.add('in'), 150));
+
+/* ---------- REVEAL observer ---------- */
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const d=parseInt(el.dataset.d||'0',10);
+      const run=()=> setTimeout(()=> el.classList.add('in'), d);
+      // hero items gated on ready
+      if(el.closest('#hero')) onReady(run); else run();
+      io.unobserve(el);
+    }
+  });
+},{ threshold:0.18, rootMargin:'0px 0px -8% 0px' });
+$$('.reveal,.line-clip').forEach(el=> io.observe(el));
+
+/* hero mark + h1 lines gated on ready */
+onReady(()=>{
+  setTimeout(()=> $('#hero-mark').classList.add('in'), 300);
+});
+
+/* word reveal for any [data-words] (not used now but kept) */
+
+/* ---------- COUNT-UP (scroll progress) ---------- */
+const counters=$$('.cu');
+function fmtNum(n,dec,comp){
+  if(comp){ // compact-ish: keep full with spaces
+    return Math.round(n).toLocaleString('ru-RU');
+  }
+  if(dec>0) return n.toFixed(dec);
+  return Math.round(n).toLocaleString('ru-RU');
+}
+let lastCu=0;
+function updateCounters(){
+  const now=performance.now(); if(now-lastCu<30) return; lastCu=now;
+  const vh=innerHeight;
+  counters.forEach(c=>{
+    const to=parseFloat(c.dataset.to), dec=parseInt(c.dataset.dec||'0',10), comp=c.dataset.fmt==='comp';
+    const r=c.getBoundingClientRect();
+    // progress: 0 when top at viewport bottom, 1 when center at viewport center
+    const start=vh, end=vh*0.5;
+    const cur=r.top;
+    let p=(start-cur)/(start-end);
+    p=Math.max(0,Math.min(1,p));
+    c.textContent=fmtNum(to*p,dec,comp);
+  });
+}
+lenis.on('scroll',updateCounters);
+addEventListener('resize',updateCounters);
+updateCounters();
+
+/* ---------- NAV OVERLAY ---------- */
+const nav=$('#nav');
+function openNav(){ nav.classList.add('open'); nav.setAttribute('aria-hidden','false'); stopScroll();
+  $$('.nv-item',nav).forEach((it,i)=> it.style.transitionDelay=`${i*45+80}ms`);
+  document.addEventListener('keydown',navEsc);
+}
+function closeNav(){ nav.classList.remove('open'); nav.setAttribute('aria-hidden','true'); startScroll();
+  $$('.nv-item',nav).forEach(it=> it.style.transitionDelay='0ms');
+  document.removeEventListener('keydown',navEsc);
+}
+function navEsc(e){ if(e.key==='Escape') closeNav(); }
+
+/* ---------- MODAL ---------- */
+const modal=$('#modal'), mPanel=$('#modal-panel');
+const mForm=$('#modal-form'), mFormWrap=$('#modal-form-wrap'), mSuccess=$('#modal-success');
+const modalCfg={
+  contact:{ kicker:'Открыть счёт', title:'Оставьте заявку.', submit:'Отправить заявку', note:'Ответим в течение одного рабочего дня', msgLabel:'Комментарий', msgPh:'Коротко о вашем запросе.' },
+  credit:{ kicker:'Заявка на кредит', title:'Оформить кредит.', submit:'Отправить на рассмотрение', note:'Решение за 0.3 секунды после проверки', msgLabel:'Сумма и цель кредита', msgPh:'Например: 1 500 000 ₿ на развитие бизнеса, 36 мес.' },
+  card:{ kicker:'Выпуск карты', title:'Выпустить карту.', submit:'Заказать карту', note:'Виртуальная карта — сразу, пластик — за день', msgLabel:'Тип карты и пожелания', msgPh:'Какую карту выпустить и куда доставить.' }
+};
+function openModal(kind,extra){
+  const cfg=modalCfg[kind]||modalCfg.contact;
+  $('#modal-kicker').textContent=cfg.kicker;
+  $('#modal-title').textContent=cfg.title;
+  $('#modal-submit-lbl').textContent=cfg.submit;
+  $('#modal-note').textContent=cfg.note;
+  $('#m-msg-label').textContent=cfg.msgLabel;
+  $('#m-msg').placeholder=cfg.msgPh;
+  if(kind==='card' && extra){ $('#m-msg').value=`Карта: ${extra}. `; }
+  mFormWrap.style.display='';
+  mSuccess.style.display='none';
+  modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); stopScroll();
+  document.addEventListener('keydown',modalEsc);
+  setTimeout(()=> $('#m-name').focus(),420);
+}
+function closeModal(){
+  modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); startScroll();
+  document.removeEventListener('keydown',modalEsc);
+  setTimeout(()=>{ mForm.reset(); mFormWrap.style.display=''; mSuccess.style.display='none'; },350);
+}
+function modalEsc(e){ if(e.key==='Escape') closeModal(); }
+modal.addEventListener('click',(e)=>{ if(e.target===modal) closeModal(); });
+mPanel.addEventListener('click',(e)=> e.stopPropagation());
+$$('[data-modal-close]').forEach(b=> b.addEventListener('click',closeModal));
+mForm.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const lbl=$('#modal-submit-lbl'); const prev=lbl.textContent; lbl.textContent='Отправляем…';
+  setTimeout(()=>{ mFormWrap.style.display='none'; mSuccess.style.display='flex'; lbl.textContent=prev; },650);
+});
+
+/* ---------- global click routing ---------- */
+document.addEventListener('click',(e)=>{
+  const t=e.target.closest('[data-scroll],[data-modal],[data-nav],[data-role]');
+  if(!t) return;
+  if(t.dataset.nav==='open'){ openNav(); return; }
+  if(t.dataset.nav==='close'){ closeNav(); return; }
+  if(t.hasAttribute('data-modal')){
+    if(nav.classList.contains('open')) closeNav();
+    openModal(t.dataset.modal, t.dataset.card);
+    return;
+  }
+  if(t.hasAttribute('data-role')){
+    openModal('contact');
+    // prefill role via career? open contact with role note
+    setTimeout(()=>{ $('#m-msg').value=`Вакансия: ${t.dataset.role}. `; $('#modal-kicker').textContent='Отклик на вакансию'; $('#modal-title').textContent='Откликнуться.'; },10);
+    return;
+  }
+  if(t.hasAttribute('data-scroll')){
+    if(nav.classList.contains('open')) closeNav();
+    scrollToId(t.dataset.scroll);
+  }
+});
+
+/* ---------- CAREER FORM ---------- */
+const cForm=$('#career-form'), cSuccess=$('#career-success');
+cForm.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const lbl=$('#cf-submit-lbl'); const prev=lbl.textContent; lbl.textContent='Отправляем…';
+  setTimeout(()=>{ cForm.style.display='none'; cSuccess.style.display='flex'; },650);
+});
+
+/* ---------- CREDIT CALCULATOR ---------- */
+(function calc(){
+  const amt=$('#amt'), termSeg=$('#term-seg'), goal=$('#goal');
+  const amtVal=$('#amt-val'), termVal=$('#term-val'), goalRate=$('#goal-rate');
+  const payVal=$('#pay-val'), outRate=$('#out-rate'), outOver=$('#out-over'), outTotal=$('#out-total');
+  let term=36;
+  const ru=n=> Math.round(n).toLocaleString('ru-RU');
+  function rate(){ return parseFloat(goal.value); }
+  function compute(){
+    const P=parseFloat(amt.value);
+    const annual=rate()/100;
+    const r=annual/12;
+    const n=term;
+    const m = r===0 ? P/n : P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+    const total=m*n;
+    const over=total-P;
+    amtVal.textContent=ru(P);
+    termVal.textContent=n;
+    goalRate.textContent=rate().toFixed(1)+'%';
+    payVal.textContent=ru(m);
+    outRate.textContent=rate().toFixed(1)+'% годовых';
+    outOver.textContent=ru(over)+' ₿';
+    outTotal.textContent=ru(total)+' ₿';
+  }
+  amt.addEventListener('input',compute);
+  goal.addEventListener('change',compute);
+  termSeg.addEventListener('click',(e)=>{
+    const b=e.target.closest('button[data-term]'); if(!b) return;
+    term=parseInt(b.dataset.term,10);
+    $$('button',termSeg).forEach(x=>x.classList.toggle('on',x===b));
+    compute();
+  });
+  compute();
+})();
+
+/* ---------- GLASS CARD 3D tilt ---------- */
+(function tilt(){
+  if(!hasHover || reduce) return;
+  const card=$('#gcard'); if(!card) return;
+  const wrap=card.closest('.gcard-wrap');
+  wrap.addEventListener('pointermove',(e)=>{
+    const r=card.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+    const rx=(0.5-py)*14, ry=(px-0.5)*18;
+    card.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+    card.style.setProperty('--mx',(px*100)+'%');
+    card.style.setProperty('--my',(py*100)+'%');
+  });
+  wrap.addEventListener('pointerleave',()=>{
+    card.style.transform='';
+    card.style.setProperty('--mx','30%'); card.style.setProperty('--my','20%');
+  });
+})();
+
+/* ---------- DARK TIDE (hero canvas, slow black waves) ---------- */
+(function tide(){
+  const canvas=$('#chrome-canvas'); if(!canvas) return;
+  const ctx=canvas.getContext('2d',{ alpha:false });
+  const dpr=Math.min(devicePixelRatio||1,2);
+  let W=0,H=0; // CSS px
+  let mx=0.5,my=0.5,hasM=false,infl=0;
+
+  function resize(){
+    const r=canvas.getBoundingClientRect();
+    W=Math.max(1,r.width); H=Math.max(1,r.height);
+    canvas.width=Math.floor(W*dpr); canvas.height=Math.floor(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  const ro=new ResizeObserver(resize); ro.observe(canvas); resize();
+
+  addEventListener('pointermove',(e)=>{
+    const r=canvas.getBoundingClientRect();
+    if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){ hasM=false; return; }
+    mx=(e.clientX-r.left)/r.width; my=(e.clientY-r.top)/r.height; hasM=true;
+  });
+  addEventListener('pointerleave',()=>{ hasM=false; });
+
+  const LAYERS=(reduce?4:7);
+  const layers=[];
+  for(let i=0;i<LAYERS;i++){
+    const t=i/(LAYERS-1);
+    layers.push({
+      base: 0.40 + t*0.70,
+      amp: 12 + t*44,
+      w1: 0.7 + t*0.6, w2: 1.7 + t*1.1, w3: 3.1 - t*0.7,
+      ph: Math.random()*Math.PI*2,
+      sp: (0.045 + t*0.05) * (i%2? 1 : -1),
+      sp2: 0.018 + t*0.02,
+      g: Math.round(7 + t*13),
+      glow: Math.random()*Math.PI*2,
+      glowSp: 0.05 + t*0.045
+    });
+  }
+
+  const MAXP=4096;
+  const xs=new Float64Array(MAXP), ys=new Float64Array(MAXP);
+
+  function waveY(L,xn,time){
+    const p=L.ph + time*L.sp;
+    let y = Math.sin((xn*L.w1*6.2832)+p)*0.60
+          + Math.sin((xn*L.w2*6.2832)-p*1.3+1.7)*0.28
+          + Math.sin((xn*L.w3*6.2832)+time*L.sp2+4.1)*0.16;
+    if(infl>0.001){
+      const d=xn-mx;
+      const bump=Math.exp(-(d*d)/0.012)*infl*26;
+      y -= bump/L.amp;
+    }
+    return L.base*H + y*L.amp;
+  }
+
+  let time=0,raf=0;
+  const STEP=1/60;
+  function frame(){
+    time+=STEP;
+    infl += ((hasM?1:0)-infl)*0.06;
+
+    ctx.fillStyle='#050507';
+    ctx.fillRect(0,0,W,H);
+
+    const N=Math.min(MAXP-1, Math.max(28, Math.floor(W/14)));
+    for(let li=0; li<LAYERS; li++){
+      const L=layers[li], c=L.g;
+      for(let s=0;s<=N;s++){ const xn=s/N; xs[s]=xn*W; ys[s]=waveY(L,xn,time); }
+
+      // body fill
+      ctx.beginPath();
+      ctx.moveTo(xs[0],ys[0]);
+      for(let s=1;s<=N;s++) ctx.lineTo(xs[s],ys[s]);
+      ctx.lineTo(W,H+2); ctx.lineTo(0,H+2); ctx.closePath();
+      const topY=L.base*H - L.amp;
+      const g=ctx.createLinearGradient(0,topY,0,H);
+      g.addColorStop(0, 'rgba('+(c+6)+','+(c+8)+','+(c+12)+',0)');
+      g.addColorStop(0.07, 'rgba('+(c+4)+','+(c+6)+','+(c+10)+',0.92)');
+      g.addColorStop(1, 'rgba(5,5,7,0.97)');
+      ctx.fillStyle=g; ctx.fill();
+
+      // crest line
+      ctx.beginPath();
+      ctx.moveTo(xs[0],ys[0]);
+      for(let s=1;s<=N;s++) ctx.lineTo(xs[s],ys[s]);
+      ctx.lineWidth=1;
+      ctx.strokeStyle='rgba('+(c+20)+','+(c+28)+','+(c+42)+',0.45)';
+      ctx.stroke();
+
+      // ultra-faint cool sweep on the crest (set glowSp scale to 0 to disable)
+      L.glow += L.glowSp*STEP;
+      const gx=0.5+0.5*Math.sin(L.glow);
+      const gy=waveY(L,gx,time);
+      const rad=ctx.createRadialGradient(gx*W,gy,0, gx*W,gy, 130+li*16);
+      rad.addColorStop(0,'rgba(0,229,212,0.07)');
+      rad.addColorStop(0.5,'rgba(0,229,212,0.022)');
+      rad.addColorStop(1,'rgba(0,229,212,0)');
+      ctx.fillStyle=rad;
+      ctx.fillRect(gx*W-170, gy-170, 340, 340);
+    }
+
+    // top darken so the headline keeps maximum contrast
+    const vg=ctx.createLinearGradient(0,0,0,H);
+    vg.addColorStop(0,'rgba(5,5,7,0.55)');
+    vg.addColorStop(0.42,'rgba(5,5,7,0)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+
+    if(!reduce) raf=requestAnimationFrame(frame);
+  }
+
+  frame(); // single paint when reduced, animated otherwise
+})();
+
+/* ---------- BALANCE SPARKLINE ---------- */
+(function spark(){
+  const cv=$('#ap-spark'); if(!cv) return;
+  const ctx=cv.getContext('2d');
+  const dpr=Math.min(devicePixelRatio||1,2);
+  let W,H,pts=[];
+  function resize(){ const r=cv.getBoundingClientRect(); W=r.width*dpr; H=r.height*dpr; cv.width=W; cv.height=H; }
+  const ro=new ResizeObserver(resize); ro.observe(cv); resize();
+  const NP=46;
+  for(let i=0;i<NP;i++) pts.push(0.5+ (Math.random()-0.5)*0.3);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // grad line
+    const grad=ctx.createLinearGradient(0,0,W,0);
+    grad.addColorStop(0,'rgba(0,229,212,0.1)'); grad.addColorStop(.5,'rgba(0,229,212,0.9)'); grad.addColorStop(1,'rgba(123,92,255,0.9)');
+    ctx.lineWidth=2*dpr; ctx.strokeStyle=grad; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.beginPath();
+    const pad=4*dpr;
+    pts.forEach((v,i)=>{
+      const x=pad+(W-pad*2)*(i/(NP-1));
+      const y=pad+(H-pad*2)*(1-v);
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    });
+    ctx.stroke();
+    // fill under
+    ctx.lineTo(W-pad,H); ctx.lineTo(pad,H); ctx.closePath();
+    const fg=ctx.createLinearGradient(0,0,0,H);
+    fg.addColorStop(0,'rgba(0,229,212,0.18)'); fg.addColorStop(1,'rgba(0,229,212,0)');
+    ctx.fillStyle=fg; ctx.fill();
+    // head dot
+    const lx=pad+(W-pad*2), ly=pad+(H-pad*2)*(1-pts[NP-1]);
+    ctx.beginPath(); ctx.arc(lx,ly,3*dpr,0,7); ctx.fillStyle='#00e5d4'; ctx.fill();
+    ctx.beginPath(); ctx.arc(lx,ly,6*dpr,0,7); ctx.strokeStyle='rgba(0,229,212,.4)'; ctx.lineWidth=1*dpr; ctx.stroke();
+  }
+  draw();
+  if(!reduce){
+    setInterval(()=>{
+      pts.shift();
+      let last=pts[pts.length-1];
+      let nv=Math.max(0.12,Math.min(0.9, last+(Math.random()-0.48)*0.22));
+      pts.push(nv);
+      draw();
+    },900);
+  }
+})();
+
+/* ---------- FINANCIAL FLOWS (network of nodes + particles) ---------- */
+(function flows(){
+  const cv=$('#flow-canvas'); if(!cv) return;
+  const ctx=cv.getContext('2d');
+  const dpr=Math.min(devicePixelRatio||1,2);
+  let W,H;
+  function resize(){ const r=cv.getBoundingClientRect(); W=r.width*dpr; H=r.height*dpr; cv.width=W; cv.height=H; build(); }
+  const ro=new ResizeObserver(resize); ro.observe(cv);
+
+  let nodes=[], edges=[], particles=[];
+  const tpsEl=$('#flow-tps');
+
+  function build(){
+    nodes=[]; edges=[]; particles=[];
+    const cols=5, rows=3;
+    const m=0.12;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        // jitter
+        const x=(m + (1-2*m)*(c/(cols-1))) + (Math.random()-0.5)*0.04;
+        const y=(m + (1-2*m)*(r/(rows-1))) + (Math.random()-0.5)*0.06;
+        nodes.push({ x, y, r:Math.random()<0.18?2.6:1.6, pulse:Math.random()*6 });
+      }
+    }
+    // connect each node to a couple of neighbors to the right/down
+    function idx(r,c){ return r*cols+c; }
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const a=idx(r,c);
+        if(c<cols-1) edges.push([a, idx(r,c+1)]);
+        if(r<rows-1 && Math.random()<0.6) edges.push([a, idx(r+1,c)]);
+        if(c<cols-1 && r<rows-1 && Math.random()<0.4) edges.push([a, idx(r+1,c+1)]);
+        if(c<cols-1 && r>0 && Math.random()<0.3) edges.push([a, idx(r-1,c+1)]);
+      }
+    }
+    const PC=reduce?0:Math.min(edges.length*2,70);
+    for(let i=0;i<PC;i++) particles.push(newP());
+  }
+  function newP(){
+    const e=edges[(Math.random()*edges.length)|0];
+    return { e, t:Math.random(), sp:0.003+Math.random()*0.006, hue:Math.random()<0.5?'n':'v', size:0.8+Math.random()*1.4 };
+  }
+  function px(n){ return n.x*W; }
+  function py(n){ return n.y*H; }
+
+  let frame=0, tps=1284;
+  function draw(){
+    frame++;
+    ctx.clearRect(0,0,W,H);
+    // edges
+    ctx.lineWidth=1*dpr;
+    edges.forEach(([a,b])=>{
+      const A=nodes[a],B=nodes[b];
+      ctx.strokeStyle='rgba(255,255,255,0.05)';
+      ctx.beginPath(); ctx.moveTo(px(A),py(A)); ctx.lineTo(px(B),py(B)); ctx.stroke();
+    });
+    // particles
+    particles.forEach(p=>{
+      p.t+=p.sp;
+      if(p.t>=1){ Object.assign(p,newP()); p.t=0; }
+      const A=nodes[p.e[0]],B=nodes[p.e[1]];
+      const x=px(A)+(px(B)-px(A))*p.t;
+      const y=py(A)+(py(B)-py(A))*p.t;
+      const col=p.hue==='n'?'0,229,212':'123,92,255';
+      const sz=p.size*dpr;
+      // glow
+      const g=ctx.createRadialGradient(x,y,0,x,y,sz*5);
+      g.addColorStop(0,`rgba(${col},0.9)`); g.addColorStop(1,`rgba(${col},0)`);
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,sz*5,0,7); ctx.fill();
+      ctx.fillStyle=`rgba(${col},1)`; ctx.beginPath(); ctx.arc(x,y,sz,0,7); ctx.fill();
+    });
+    // nodes
+    nodes.forEach(n=>{
+      const x=px(n),y=py(n);
+      const pulse=(Math.sin(frame*0.04+n.pulse)*0.5+0.5);
+      ctx.beginPath(); ctx.arc(x,y,n.r*dpr+pulse*1.2*dpr,0,7);
+      ctx.fillStyle=`rgba(0,229,212,${0.4+pulse*0.5})`; ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,(n.r+3)*dpr,0,7);
+      ctx.strokeStyle=`rgba(0,229,212,${0.08+pulse*0.12})`; ctx.lineWidth=1*dpr; ctx.stroke();
+    });
+    if(!reduce) requestAnimationFrame(draw);
+  }
+  resize();
+  if(reduce){ draw(); }
+  else { requestAnimationFrame(draw);
+    // animate tps counter
+    setInterval(()=>{
+      tps += (Math.random()-0.45)*60; tps=Math.max(820,Math.min(2400,tps));
+      if(tpsEl) tpsEl.textContent=Math.round(tps).toLocaleString('ru-RU');
+    },1400);
+  }
+})();
+
+/* ---------- skip link focus styling ---------- */
+$('#skip').addEventListener('focus',function(){ this.style.cssText='position:fixed;left:1rem;top:1rem;z-index:300;width:auto;height:auto;clip:auto;background:#00e5d4;color:#04201d;padding:.6rem 1.1rem;border-radius:.75rem;font-weight:600;'; });
+$('#skip').addEventListener('blur',function(){ this.style.cssText=''; this.className='sr-only'; });
+
+</script>
+</body>
+</html>
